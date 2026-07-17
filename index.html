@@ -1,66 +1,272 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ELL KEN AI</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <link rel="stylesheet" href="style.css">
+<title>Ell Ken AI Assistant</title>
 
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="style.css">
 
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+
 </head>
 
 <body>
 
-<div class="sidebar">
+<div class="app">
+
+
+<!-- SIDEBAR -->
+
+<aside class="sidebar">
+
+<div class="brand">
 
 <div class="logo">
-🤖
-<h2>ELL KEN AI</h2>
+<i class="fa-solid fa-brain"></i>
 </div>
 
-<button id="newChat">
-➕ Chat Baru
-</button>
-
-<button id="clearChat">
-🗑 Hapus Riwayat
-</button>
+<h2>Ell Ken AI</h2>
 
 </div>
 
-<div class="main">
 
-<header>
+
+<button class="new-chat" id="newChat">
+
+<i class="fa-solid fa-plus"></i>
+
+Chat Baru
+
+</button>
+
+
+
+<div class="history-title">
+Riwayat Chat
+</div>
+
+
+<div id="history" class="history">
+
+</div>
+
+
+
+<div class="sidebar-bottom">
+
+
+<button id="settings">
+
+<i class="fa-solid fa-gear"></i>
+
+Pengaturan
+
+</button>
+
+
+
+<button id="clear">
+
+<i class="fa-solid fa-trash"></i>
+
+Hapus Chat
+
+</button>
+
+
+</div>
+
+
+</aside>
+
+
+
+
+
+<!-- AREA CHAT -->
+
+<main class="main">
+
+
+
+<header class="topbar">
+
 
 <div>
-<h2>ELL KEN AI</h2>
-<p>Powered by Gemini</p>
+
+<h1>
+Ell Ken AI
+</h1>
+
+
+<p>
+AI Assistant Futuristik
+</p>
+
+
 </div>
+
+
+
+<div class="actions">
+
+
+<button id="theme">
+
+<i class="fa-solid fa-moon"></i>
+
+</button>
+
+
+
+<button id="profile">
+
+<i class="fa-solid fa-user"></i>
+
+</button>
+
+
+
+</div>
+
 
 </header>
 
-<div id="chat" class="chat">
 
-<div class="message bot">
 
-Halo 👋
 
-Saya <b>ELL KEN AI</b>.
 
-Saya bisa membantu:
 
-✅ Chat AI
+<section id="chatBox" class="chat-box">
 
-✅ Upload gambar
 
-✅ Menulis kode
 
-✅ Menjawab pertanyaan
+<div class="welcome">
+
+
+<div class="ai-logo">
+
+<i class="fa-solid fa-robot"></i>
 
 </div>
+
+
+
+<h2>
+Halo 👋
+</h2>
+
+
+
+<p>
+Saya adalah Ell Ken AI.
+Ada yang ingin kamu tanyakan?
+</p>
+
+
+
+<div class="suggestions">
+
+
+<button>
+Jelaskan sesuatu
+</button>
+
+
+<button>
+Buat ide kreatif
+</button>
+
+
+<button>
+Bantu coding
+</button>
+
+
+</div>
+
+
+
+</div>
+
+
+
+</section>
+
+
+
+
+
+<div id="typing" class="typing hidden">
+
+
+<span></span>
+<span></span>
+<span></span>
+
+
+</div>
+
+
+
+
+
+
+
+<footer class="input-area">
+
+
+<textarea
+
+id="prompt"
+
+placeholder="Tanyakan sesuatu ke Ell Ken AI..."
+
+rows="1">
+
+</textarea>
+
+
+
+
+<button id="send">
+
+<i class="fa-solid fa-paper-plane"></i>
+
+</button>
+
+
+
+</footer>
+
+
+
+
+
+</main>
+
+
+
+</div>
+
+
+
+
+
+<script src="config.js"></script>
+
+<script src="storage.js"></script>
+
+<script src="api.js"></script>
+
+<script src="script.js"></script>
+
+
+
+</body>
+</html>
