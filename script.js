@@ -1,109 +1,327 @@
-const API_URL = "YOUR_WORKER_URL";
+const chatBox = document.getElementById("chatBox");
+const promptBox = document.getElementById("prompt");
+const sendBtn = document.getElementById("send");
 
-const chat = document.getElementById("chat");
-const prompt = document.getElementById("prompt");
-const send = document.getElementById("send");
-const imageInput = document.getElementById("imageInput");
-const clearChat = document.getElementById("clearChat");
-const newChat = document.getElementById("newChat");
+const newChatBtn = document.getElementById("newChat");
+const clearBtn = document.getElementById("clear");
+const themeBtn = document.getElementById("theme");
 
-let image = null;
+const typing = document.getElementById("typing");
+const historyBox = document.getElementById("history");
 
-function addMessage(role, text) {
-  const div = document.createElement("div");
-  div.className = `message ${role}`;
-  div.innerHTML = marked.parse(text);
-  chat.appendChild(div);
-  chat.scrollTop = chat.scrollHeight;
-}
 
-async function sendMessage() {
-  const text = prompt.value.trim();
+let chats = loadChat();
 
-  if (!text && !image) return;
 
-  addMessage("user", text);
+// LOAD HISTORY SAAT START
 
-  prompt.value = "";
+renderHistory();
 
-  const loading = document.createElement("div");
-  loading.className = "message bot";
-  loading.innerHTML = "⏳ ELL KEN AI sedang mengetik...";
-  chat.appendChild(loading);
 
-  try {
-    const res = await fetch(API_URL, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        message: text,
-        image
-      })
-    });
 
-    const data = await res.json();
 
-    loading.remove();
 
-    addMessage("bot", data.reply || "Tidak ada jawaban.");
+// KIRIM PESAN
 
-    image = null;
+sendBtn.onclick = sendMessage;
 
-  } catch (err) {
 
-    loading.remove();
+promptBox.addEventListener("keydown",e=>{
 
-    addMessage(
-      "bot",
-      "❌ Gagal terhubung ke server."
-    );
+    if(e.key==="Enter" && !e.shiftKey){
 
-  }
-}
+        e.preventDefault();
 
-send.onclick = sendMessage;
+        sendMessage();
 
-prompt.addEventListener("keydown", e => {
-  if (e.key === "Enter") {
-    e.preventDefault();
-    sendMessage();
-  }
-});
-
-imageInput.addEventListener("change", e => {
-
-  const file = e.target.files[0];
-
-  if (!file) return;
-
-  const reader = new FileReader();
-
-  reader.onload = () => {
-
-    image = reader.result;
-
-  };
-
-  reader.readAsDataURL(file);
+    }
 
 });
 
-clearChat.onclick = () => {
 
-  chat.innerHTML = "";
+
+
+
+async function sendMessage(){
+
+    let text = promptBox.value.trim();
+
+    if(!text)return;
+
+
+    addMessage("user",text);
+
+
+    promptBox.value="";
+
+
+    typing.classList.remove("hidden");
+
+
+    saveMessage("user",text);
+
+
+
+    try{
+
+
+        let answer = await askAI(text);
+
+
+        typing.classList.add("hidden");
+
+
+        addMessage("ai",answer);
+
+
+        saveMessage("ai",answer);
+
+
+
+    }catch(err){
+
+
+        typing.classList.add("hidden");
+
+
+        addMessage(
+            "ai",
+            "Terjadi kesalahan koneksi."
+        );
+
+
+    }
+
+
+}
+
+
+
+
+
+
+// TAMBAH CHAT KE LAYAR
+
+function addMessage(type,text){
+
+
+    const div=document.createElement("div");
+
+
+    div.className="message "+type;
+
+
+    div.innerHTML=`
+    <b>${type==="ai"?"Ell Ken AI":"Kamu"}</b>
+    <br>
+    ${escapeHTML(text)}
+    `;
+
+
+    chatBox.appendChild(div);
+
+
+    chatBox.scrollTop=chatBox.scrollHeight;
+
+
+}
+
+
+
+
+
+// AMANKAN TEXT
+
+function escapeHTML(text){
+
+    return text
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;");
+
+}
+
+
+
+
+
+
+// CHAT BARU
+
+newChatBtn.onclick=()=>{
+
+
+    chatBox.innerHTML="";
+
+
+    localStorage.removeItem("current");
+
+
+    createWelcome();
+
 
 };
 
-newChat.onclick = () => {
 
-  chat.innerHTML = `
-<div class="message bot">
-Halo 👋<br><br>
-Saya <b>ELL KEN AI</b>.<br>
-Silakan mulai percakapan baru.
+
+
+
+function createWelcome(){
+
+chatBox.innerHTML=`
+
+<div class="welcome">
+
+<div class="ai-logo">
+<i class="fa-solid fa-robot"></i>
 </div>
+
+
+<h2>
+Halo 👋
+</h2>
+
+
+<p>
+Saya Ell Ken AI.
+Ada yang ingin kamu tanyakan?
+</p>
+
+</div>
+
 `;
 
+}
+
+
+
+
+
+
+// HAPUS RIWAYAT
+
+clearBtn.onclick=()=>{
+
+
+    localStorage.clear();
+
+
+    chats=[];
+
+
+    historyBox.innerHTML="";
+
+
+    createWelcome();
+
+
 };
+
+
+
+
+
+
+
+// DARK MODE
+
+themeBtn.onclick=()=>{
+
+
+document.body.classList.toggle("light");
+
+
+};
+
+
+
+
+
+
+// TAMPIL HISTORY
+
+function renderHistory(){
+
+
+historyBox.innerHTML="";
+
+
+chats.forEach((chat,index)=>{
+
+
+let item=document.createElement("div");
+
+
+item.className="history-item";
+
+
+item.innerHTML=`
+
+<i class="fa-solid fa-message"></i>
+
+${chat.substring(0,25)}
+
+`;
+
+
+
+historyBox.appendChild(item);
+
+
+
+});
+
+
+
+}
+
+
+
+
+
+
+// SIMPAN PESAN
+
+function saveMessage(role,text){
+
+
+let data=JSON.parse(
+localStorage.getItem("messages")||"[]"
+);
+
+
+
+data.push({
+
+role:role,
+
+text:text,
+
+time:new Date()
+
+});
+
+
+
+localStorage.setItem(
+"messages",
+JSON.stringify(data)
+);
+
+
+}
+
+
+
+
+
+
+
+function loadChat(){
+
+
+return JSON.parse(
+localStorage.getItem("history")||"[]"
+);
+
+
+}
